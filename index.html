@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COMPASS - Sign In</title>
+  <link rel="icon" type="image/png" href="assets/icons/compass.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { fontFamily: { inter: ["Inter", "sans-serif"] } } }
+    }
+  </script>
+  <style>
+    @keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
+
+    /* ── Loading screen styles ── */
+    @keyframes bgCompassSpin {
+      0%   { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    @keyframes logoPulse {
+      0%, 100% { transform: scale(1); }
+      50%      { transform: scale(1.06); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes dotBounce {
+      0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+      40% { opacity: 1; transform: scale(1); }
+    }
+
+    .bg-compass {
+      position: fixed; top: 50%; left: 50%;
+      width: 380px; height: 380px;
+      opacity: 0.05;
+      animation: bgCompassSpin 8s linear infinite;
+      pointer-events: none;
+    }
+    @media (min-width: 640px) { .bg-compass { width: 500px; height: 500px; } }
+
+    .logo-pulse { animation: logoPulse 2s ease-in-out infinite; }
+    .fade-in { animation: fadeInUp 0.5s ease forwards; }
+    .fade-delay-1 { animation-delay: 0.12s; opacity: 0; }
+    .fade-delay-2 { animation-delay: 0.25s; opacity: 0; }
+    .fade-delay-3 { animation-delay: 0.38s; opacity: 0; }
+    .dot { animation: dotBounce 1.4s ease-in-out infinite; }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+    #splashProgress { transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+  </style>
+</head>
+
+<body class="min-h-screen flex bg-gray-50 font-inter">
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- LOADING OVERLAY — sits on top of everything    -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div id="splashOverlay" class="fixed inset-0 z-[9999] bg-white flex items-center justify-center overflow-hidden" style="transition: opacity 0.5s ease, visibility 0.5s ease;">
+
+    <!-- Background spinning compass -->
+    <img src="assets/icons/compass.png" alt="" class="bg-compass" id="splashBgCompass" onerror="this.style.display='none'">
+
+    <!-- Center content -->
+    <div id="splashContent" class="flex flex-col items-center gap-7 relative z-10 px-6" style="transition: opacity 0.5s ease, transform 0.5s ease;">
+
+      <!-- Logo -->
+      <div class="fade-in">
+        <div class="logo-pulse w-20 h-20 sm:w-24 sm:h-24 bg-blue-600 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-600/25">
+          <img src="assets/icons/compass.png" class="w-12 h-12 sm:w-14 sm:h-14" alt="COMPASS" onerror="this.style.display='none'">
+        </div>
+      </div>
+
+      <!-- Brand -->
+      <div class="text-center fade-in fade-delay-1">
+        <h1 class="text-[22px] sm:text-[26px] font-bold text-gray-900 tracking-wide">COMPASS</h1>
+        <p class="text-[9px] sm:text-[10px] font-semibold text-gray-400 tracking-[4px] mt-1">ALUMNI PORTAL</p>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="w-52 sm:w-64 fade-in fade-delay-2">
+        <div class="w-full h-[6px] bg-gray-200 rounded-full overflow-hidden">
+          <div id="splashProgress" class="h-full bg-gradient-to-r from-blue-600 to-blue-500 rounded-full" style="width: 0%"></div>
+        </div>
+        <div class="flex items-center justify-center gap-1 mt-4">
+          <p class="text-[12px] text-gray-400" id="splashText">Initializing</p>
+          <span class="flex gap-[2px] mt-[1px]" id="splashDots">
+            <span class="dot w-[3px] h-[3px] rounded-full bg-gray-400 inline-block"></span>
+            <span class="dot w-[3px] h-[3px] rounded-full bg-gray-400 inline-block"></span>
+            <span class="dot w-[3px] h-[3px] rounded-full bg-gray-400 inline-block"></span>
+          </span>
+        </div>
+        <p class="text-[10px] text-gray-300 text-center mt-2" id="splashPercent">0%</p>
+      </div>
+
+      <!-- Tagline -->
+      <p class="text-[11px] text-gray-300 text-center mt-2 fade-in fade-delay-3">Connecting learning to real career outcomes</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- LOGIN PAGE — hidden behind the overlay         -->
+  <!-- ═══════════════════════════════════════════════ -->
+
+  <!-- LEFT PANEL -->
+  <section class="hidden lg:flex w-[40.3%] min-h-screen bg-gradient-to-b from-[#3b5fe0] via-[#2545c8] to-[#1e3bb5] p-20 flex-col justify-between text-white">
+    <div class="flex items-center gap-4">
+      <div class="w-12 h-12 bg-white/15 rounded-xl flex items-center justify-center"><img src="assets/icons/compass.png" alt="COMPASS" class="w-8 h-8 object-contain"></div>
+      <div><h1 class="text-xl font-semibold tracking-[0.5px]">COMPASS</h1><span class="text-[11px] font-medium tracking-[1px] text-slate-50">OUTCOMES INTELLIGENCE</span></div>
+    </div>
+    <div class="my-auto">
+      <div class="text-[11px] font-medium tracking-[2px] text-slate-50 mb-6">CURRICULUM OUTCOMES EVALUATION</div>
+      <h2 class="text-[44px] font-normal leading-tight mb-6">Evidence for every academic decision.</h2>
+      <p class="text-base text-slate-50 leading-[1.5] max-w-[440px]">Bring alumni outcomes, workplace signals, and curriculum performance into one shared intelligence system.</p>
+    </div>
+    <div class="border-t border-white/20 pt-8">
+      <div class="mb-6"><div class="flex items-center gap-4 mb-1.5"><span class="text-[11px] font-semibold text-white/50">01</span><span class="text-sm font-semibold">Graduate outcomes</span></div><p class="text-[13px] text-[#b2bcd0]">Track employment, job alignment, skills, and locations.</p></div>
+      <div><div class="flex items-center gap-4 mb-1.5"><span class="text-[11px] font-semibold text-white/50">02</span><span class="text-sm font-semibold">Curriculum intelligence</span></div><p class="text-[13px] text-[#b2bcd0]">Turn tracer evidence into review-ready insight.</p></div>
+    </div>
+  </section>
+
+  <!-- RIGHT PANEL -->
+  <main class="flex-1 min-h-screen bg-white flex items-center justify-center px-4 py-8 sm:px-8 sm:py-12 lg:p-20">
+    <div class="w-full max-w-[420px]">
+
+      <!-- Mobile logo -->
+      <div class="flex items-center gap-3 mb-8 lg:hidden">
+        <div class="w-10 h-10 bg-[#264eeb] rounded-xl flex items-center justify-center">
+          <img src="assets/icons/compass.png" alt="COMPASS" class="w-6 h-6" onerror="this.style.display='none'">
+        </div>
+        <div>
+          <h1 class="text-lg font-semibold text-gray-900 leading-tight">COMPASS</h1>
+          <span class="text-[9px] font-medium text-gray-500 tracking-widest">OUTCOMES INTELLIGENCE</span>
+        </div>
+      </div>
+
+      <div class="mb-6 sm:mb-8">
+        <div class="text-[11px] font-semibold text-gray-500 tracking-[1.5px] uppercase mb-3">WELCOME BACK</div>
+        <h1 class="text-[26px] sm:text-[32px] font-normal leading-tight">Sign in to your workspace</h1>
+        <p class="text-sm text-gray-500 mt-3">Access your outcomes workspace or alumni account.</p>
+      </div>
+
+      <div class="flex p-1 border border-gray-200 rounded-lg mb-6 sm:mb-8 bg-white">
+        <button type="button" id="alumniTab" onclick="switchTab('alumni')" class="flex-1 p-2.5 text-center text-[13px] font-semibold text-gray-900 rounded-md bg-gray-100">Alumni account</button>
+        <button type="button" id="institutionTab" onclick="switchTab('institution')" class="flex-1 p-2.5 text-center text-[13px] font-medium text-gray-500 rounded-md hover:bg-gray-50 transition">Institution account</button>
+      </div>
+
+      <div id="loginError" class="hidden mb-5 p-3.5 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3">
+        <svg class="w-4 h-4 text-red-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+        <p id="loginErrorMsg" class="text-[13px] text-red-600 font-medium"></p>
+      </div>
+
+      <div id="linkedinErrorBanner" class="hidden mb-5 p-3.5 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3">
+        <svg class="w-4 h-4 text-red-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+        <p class="text-[13px] text-red-600 font-medium" id="linkedinErrorMsg">LinkedIn sign-in failed. Please try again.</p>
+      </div>
+
+      <div class="mb-5">
+        <label for="email" class="block text-[13px] font-medium text-gray-700 mb-2" id="emailLabel">Alumni email</label>
+        <input id="email" name="email" type="text" autocomplete="email" class="w-full h-11 px-4 border border-gray-200 rounded-lg text-[13px] text-gray-900 bg-white outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10">
+      </div>
+
+      <div class="mb-5">
+        <label for="password" class="block text-[13px] font-medium text-gray-700 mb-2">Password</label>
+        <div class="relative">
+          <input id="password" name="password" type="password" autocomplete="current-password" class="w-full h-11 px-4 pr-11 border border-gray-200 rounded-lg text-[13px] text-gray-900 bg-white outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10">
+          <button type="button" onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+            <svg id="eyeOff" class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            <svg id="eyeOn" class="hidden w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="-mt-3 mb-5 text-right"><a href="forgot-password.html" class="text-[13px] font-medium text-[#3154E8] hover:underline">Forgot password?</a></div>
+
+      <div class="flex items-center gap-2 mb-6 sm:mb-8">
+        <input type="checkbox" id="remember" checked class="w-4 h-4 accent-[#264eeb] cursor-pointer shrink-0">
+        <label for="remember" class="text-[13px] text-gray-500 cursor-pointer">Keep me signed in</label>
+      </div>
+
+      <button type="button" onclick="handleLogin()" class="w-full h-12 bg-[#264eeb] text-white rounded-lg text-sm font-semibold cursor-pointer hover:bg-[#1e3fd0] transition-colors">Open my Compass account</button>
+
+      <div class="flex items-center gap-4 my-5">
+        <div class="flex-1 h-px bg-gray-300"></div>
+        <span class="text-[13px] text-gray-500">or</span>
+        <div class="flex-1 h-px bg-gray-300"></div>
+      </div>
+
+      <!-- LINKEDIN BUTTON -->
+      <button type="button" onclick="startLinkedInSignIn()"
+         class="w-full h-12 bg-white text-gray-700 border-[1.5px] border-gray-300 rounded-lg text-[15px] font-medium cursor-pointer flex items-center justify-center gap-2.5 hover:bg-[#f0f6ff] hover:border-[#0a66c2] hover:text-[#0a66c2] transition-all">
+        <svg class="w-5 h-5 text-[#0a66c2]" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+        </svg>
+        Sign in with LinkedIn
+      </button>
+
+      <div class="mt-5 text-center">
+        <p class="text-[13px] text-gray-500">Need an account? <a href="register.html" class="text-gray-900 font-semibold hover:underline">Register with Compass</a></p>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/loading.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/linkedin-connect.js"></script>
+  <script src="js/login-page.js"></script>
+</body>
+</html>
